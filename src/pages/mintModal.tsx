@@ -1,4 +1,4 @@
-import { Button, Card, Modal } from 'antd';
+import { Button, Card, Input, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { api } from '../utils/api';
 import { getStringByteCount, handleError, stringToBase64 } from '../utils/utils';
@@ -7,8 +7,6 @@ import { useEventEmitter, useLocalStorageState } from "ahooks";
 import { setApiKey, setApiNetwork } from "../utils/httpUtils";
 import { NetworkType } from '../types';
 import { CreateOrderFile } from '../utils/api-types';
-import fs from 'fs';
-import imageType from 'image-type';
 
 
 interface ModalProps {
@@ -39,10 +37,12 @@ const MintModal: React.FC<ModalProps> = ({ name, onClose, image, price, receiveA
     const [devAddress_, setDevAddress_] = useState('');
     const [fileName_, setfileName_] = useState('');
     const [imageUrl_, setImageUrl_] = useState('');
+    const [totalFee, setTotalFee] = useState(0);
     const [name_, setName_] = useState('');
     const [price_, setPrice_] = useState('');
     const [fileList, setFileList] = useState<InscribeFileData[]>([])
-    const [orderId, setOrderId] = useState('')
+    const [orderId, setOrderId] = useState('');
+    const [baseFee, setBaseFee] = useState(1999);
     const newOrder$ = useEventEmitter<void>();
 
 
@@ -50,15 +50,12 @@ const MintModal: React.FC<ModalProps> = ({ name, onClose, image, price, receiveA
         setReceiveAddress_(receiveAddress);
         setName_(name);
         setPrice_(price.toString());
-        setOutputValue_(546);
-        setFeeRate_(feeRate);
         setDevFee_(0);
         setDevAddress_(receiveAddress);
         setfileName_(fileName);
         setImageUrl_(image);
         setApiKey('c2b8064b78301fdf58c69e42838adea56fb1c8010613f57b8e9490bf6cc5be51');
         setApiNetwork(NetworkType.testnet);
-        // setApiKey(apiKey);
         setFileList([
             {
                 filename: fileName.slice(0, 512),
@@ -69,52 +66,49 @@ const MintModal: React.FC<ModalProps> = ({ name, onClose, image, price, receiveA
     }, [receiveAddress, name, price, feeRate, receiveAddress, fileName, image]);
 
 
-    // const getFeeDetail = (feeRate = 0, outputValue: number, fileList: InscribeFileData[], devFee: number, address: string) => {
+    const getFeeDetail = () => {
 
-    //     const inscriptionBalance = outputValue; // the balance in each inscription
-    //     const fileCount = fileList.length; // the fileCount
-    //     const fileSize = fileList.reduce((pre, item) => pre + item.size, 0); // the total size of all files
-    //     const contentTypeSize = fileList.reduce((pre, item) => pre + item.dataURL.split('data:')[1].split('base64')[0].length, 0); // the size of contentType
-    //     const feeFileSize = fileList.slice(0, 25).reduce((pre, item) => pre + item.size, 0); // the total size of first 25 files
-    //     const feeFileCount = 25 // do not change this
+        const inscriptionBalance = outputValue_; // the balance in each inscription
+        const fileCount = fileList.length; // the fileCount
+        const fileSize = fileList.reduce((pre, item) => pre + item.size, 0); // the total size of all files
+        const contentTypeSize = fileList.reduce((pre, item) => pre + item.dataURL.split('data:')[1].split('base64')[0].length, 0); // the size of contentType
+        const feeFileSize = fileList.slice(0, 25).reduce((pre, item) => pre + item.size, 0); // the total size of first 25 files
+        const feeFileCount = 25 // do not change this
+        const balance = inscriptionBalance * fileCount;
 
-    //     const balance = inscriptionBalance * fileCount;
+        let addrSize = 25 + 1; // p2pkh
+        if (receiveAddress.indexOf('bc1q') == 0 || receiveAddress.indexOf('tb1q') == 0) {
+            addrSize = 22 + 1;
+        } else if (receiveAddress.indexOf('bc1p') == 0 || receiveAddress.indexOf('tb1p') == 0) {
+            addrSize = 34 + 1;
+        } else if (receiveAddress.indexOf('2') == 0 || receiveAddress.indexOf('3') == 0) {
+            addrSize = 23 + 1;
+        }
 
-    //     let addrSize = 25 + 1; // p2pkh
-    //     if (address.indexOf('bc1q') == 0 || address.indexOf('tb1q') == 0) {
-    //         addrSize = 22 + 1;
-    //     } else if (address.indexOf('bc1p') == 0 || address.indexOf('tb1p') == 0) {
-    //         addrSize = 34 + 1;
-    //     } else if (address.indexOf('2') == 0 || address.indexOf('3') == 0) {
-    //         addrSize = 23 + 1;
-    //     }
+        const baseSize = 88;
 
-    //     const baseSize = 88;
-    //     let networkFee = Math.ceil(((fileSize + contentTypeSize) / 4 + (baseSize + 8 + addrSize + 8 + 23)) * feeRate);
-    //     if (fileCount > 1) {
-    //         networkFee = Math.ceil(((fileSize + contentTypeSize) / 4 + (baseSize + 8 + addrSize + (35 + 8) * (fileCount - 1) + 8 + 23 + (baseSize + 8 + addrSize + 0.5) * (fileCount - 1))) * feeRate);
-    //     }
-    //     let networkSatsByFeeCount = Math.ceil(((feeFileSize + contentTypeSize) / 4 + (baseSize + 8 + addrSize + 8 + 23)) * feeRate);
-    //     if (fileCount > 1) {
-    //         networkSatsByFeeCount = Math.ceil((((feeFileSize) + contentTypeSize * (feeFileCount / fileCount)) / 4 + (baseSize + 8 + addrSize + (35 + 8) * (fileCount - 1) + 8 + 23 + (baseSize + 8 + addrSize + 0.5) * Math.min(fileCount - 1, feeFileCount - 1))) * feeRate);
-    //     }
+        let networkFee = Math.ceil(((fileSize + contentTypeSize) / 4 + (baseSize + 8 + addrSize + 8 + 23)) * feeRate);
+        if (fileCount > 1) {
+            networkFee = Math.ceil(((fileSize + contentTypeSize) / 4 + (baseSize + 8 + addrSize + (35 + 8) * (fileCount - 1) + 8 + 23 + (baseSize + 8 + addrSize + 0.5) * (fileCount - 1))) * feeRate);
+        }
+        let networkSatsByFeeCount = Math.ceil(((feeFileSize + contentTypeSize) / 4 + (baseSize + 8 + addrSize + 8 + 23)) * feeRate);
+        if (fileCount > 1) {
+            networkSatsByFeeCount = Math.ceil((((feeFileSize) + contentTypeSize * (feeFileCount / fileCount)) / 4 + (baseSize + 8 + addrSize + (35 + 8) * (fileCount - 1) + 8 + 23 + (baseSize + 8 + addrSize + 0.5) * Math.min(fileCount - 1, feeFileCount - 1))) * feeRate);
+        }
 
-    //     const baseFee = 1999 * Math.min(fileCount, feeFileCount); // 1999 base fee for top 25 files
-    //     const floatFee = Math.ceil(networkSatsByFeeCount * 0.0499); // 4.99% extra miner fee for top 25 transations
-    //     const serviceFee = Math.floor(baseFee + floatFee);
+        const baseFee = 1999 * Math.min(fileCount, feeFileCount); // 1999 base fee for top 25 files
+        setBaseFee(baseFee);
+        const floatFee = Math.ceil(networkSatsByFeeCount * 0.0499); // 4.99% extra miner fee for top 25 transations
+        const serviceFee = Math.floor(baseFee + floatFee);
+        const total = balance + networkFee + serviceFee;
+        const truncatedTotal = Math.floor((total) / 1000) * 1000; // truncate
+        const amount = truncatedTotal + devFee; // add devFee at the end
+        setTotalFee(amount)
+        console.log(feeRate)
+        console.log(total)
+        return amount;
+    }
 
-    //     const total = balance + networkFee + serviceFee;
-    //     const truncatedTotal = Math.floor((total) / 1000) * 1000; // truncate
-    //     const amount = truncatedTotal + devFee; // add devFee at the end
-    //     return amount;
-    // }
-
-    // const imageType = require('image-type')
-
-    // const contents = fs.readFileSync('image.png')
-    // const b64 = contents.toString('base64')
-    // const type = imageType(contents)
-    // console.log(`data:${type.mime};base64,${b64}`)
     function imageUrlToBase64(url: any) {
         return fetch(url)
             .then(response => response.blob())
@@ -153,6 +147,16 @@ const MintModal: React.FC<ModalProps> = ({ name, onClose, image, price, receiveA
         }
     }
 
+    const handleFeeRateOnChange = async (event: any) => {
+        setFeeRate_(event.target.value);
+        getFeeDetail();
+    };
+
+    const handleOutputOnChange = async (event: any) => {
+        setOutputValue_(event.target.value);
+        getFeeDetail();
+    };
+
     return (
         <Modal
             visible={true}
@@ -171,6 +175,12 @@ const MintModal: React.FC<ModalProps> = ({ name, onClose, image, price, receiveA
                     title={name}
                     description={description}
                 />
+                <Input placeholder="Output Value" style={{ marginTop: '10px' }} onChange={handleOutputOnChange} />
+                <Input placeholder="Fee rate" style={{ marginTop: '10px' }} onChange={handleFeeRateOnChange} />
+                <div style={{ color: "beige" }}>
+                    <p>Base Fee: {baseFee}</p>
+                    <p>Total: {totalFee}</p>
+                </div>
                 <div style={{ marginTop: '20px', textAlign: 'center' }}>
                     <Button type="primary" style={{ width: "100%", marginBottom: "10px", paddingBottom: "5px" }} className="mint-button" onClick={createOrder}>Mint</Button>
                     <Button type="primary" className="cancel-button" style={{ width: "100%" }} onClick={onClose}>Cancel</Button>
