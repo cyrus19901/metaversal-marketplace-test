@@ -2,6 +2,12 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Metaversal-Marketplace
+This app does miniting of NFT's on BTC using inscription . Upon load , we will see a basic webpage which will talk about Inscription and Ordinals and what they are in depth.
+
+Once the wallet is connected, it will take you to the minting page and you get various options on how to inscribe an NFT.
+![alt text](/var/folders/9w/6ktxx0j92h92ffw24f1qlq0r0000gn/T/TemporaryItems/NSIRD_screencaptureui_obpeVf/Screenshot 2024-02-20 at 8.51.21 AM.png)
+
 ## Available Scripts
 
 In the project directory, you can run:
