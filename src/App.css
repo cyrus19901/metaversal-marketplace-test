@@ -126,6 +126,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 100;
 }
 
 .modal-content {
@@ -185,9 +186,11 @@
   color: #fff;
   border: none;
   border-radius: 4px;
-  padding: 10px 20px;
-  margin-right: 10px;
   cursor: pointer;
+}
+
+.nft-card-container {
+  background-color: black;
 }
 
 .cancel-button:hover,
@@ -229,5 +232,11 @@
 
   .ant-typography {
     color: #000;
+  }
+}
+
+.nft-container {
+  .ant-modal-content {
+    background-color: #000;
   }
 }

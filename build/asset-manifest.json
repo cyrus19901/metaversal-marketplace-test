@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.70405a37.css",
+    "main.js": "/static/js/main.30c78238.js",
+    "static/js/453.b3127dbe.chunk.js": "/static/js/453.b3127dbe.chunk.js",
+    "static/media/dark-grunge-style-scratched-metal-surface.jpg": "/static/media/dark-grunge-style-scratched-metal-surface.63504d2b06e68548690a.jpg",
+    "static/media/7959.webp": "/static/media/7959.bca994d655cebcd01f3e.webp",
+    "static/media/1656.webp": "/static/media/1656.343fdec4b0430476997f.webp",
+    "static/media/5439.webp": "/static/media/5439.fff6e8918aeb47ba92b5.webp",
+    "static/media/705.webp": "/static/media/705.3ca0b332048f999a686d.webp",
+    "static/media/7456.webp": "/static/media/7456.43cc07c063201ccc7d7a.webp",
+    "static/media/6290.webp": "/static/media/6290.b26d683f84e9f34b591b.webp",
+    "static/media/2104.webp": "/static/media/2104.21dd56b501f1aa3dbfa7.webp",
+    "static/media/7488.webp": "/static/media/7488.68915dc144b440a4aa3d.webp",
+    "static/media/9859.webp": "/static/media/9859.65e0ebce8d3b25135d8d.webp",
+    "static/media/2318.webp": "/static/media/2318.f9db8328c61cb48a3b57.webp",
+    "static/media/8569.avif": "/static/media/8569.c96d60c6f2737e66c3dd.avif",
+    "static/media/6819.webp": "/static/media/6819.dc1b04a34ed8ea49c8d5.webp",
+    "index.html": "/index.html",
+    "main.70405a37.css.map": "/static/css/main.70405a37.css.map",
+    "main.30c78238.js.map": "/static/js/main.30c78238.js.map",
+    "453.b3127dbe.chunk.js.map": "/static/js/453.b3127dbe.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.70405a37.css",
+    "static/js/main.30c78238.js"
+  ]
+}
