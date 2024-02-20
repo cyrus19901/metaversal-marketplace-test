@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { Button, Card } from "antd";
-import MintModal from "./pages/MintModal";
+import { Button } from "antd";
 import { NetworkType } from "./types";
 import { Header } from "antd/es/layout/layout";
 import Homepage, { aboutLinks, socialMediaLinks } from "./pages/HomePage";
@@ -14,15 +13,6 @@ function App() {
   const [address, setAddress] = useState("");
   const [network, setNetwork] = useState(NetworkType.testnet.toString());
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(true);
-  };
   const selfRef = useRef<{ accounts: string[] }>({
     accounts: [],
   });
@@ -51,44 +41,6 @@ function App() {
     const result = await unisat.requestAccounts();
     handleAccountsChanged(result);
   };
-
-  // interface NFTCardProps {
-  //   imageUrl: string;
-  //   name: string;
-  //   price: number;
-  // }
-
-  // const NFTCard: React.FC<NFTCardProps> = ({ imageUrl, name, price }) => {
-
-  //   return (
-  //     <Card
-  //       className="nft-box"
-  //       hoverable
-  //       cover={<img alt={name} src={imageUrl} style={{ width: "100%" }} />}
-  //     >
-  //       <Card.Meta
-  //         title={name}
-  //         description={`Price: ${price} BTC`}
-  //         style={{ color: "white" }}
-  //       />
-  //       <Button type="primary" style={{ width: "100%" }} onClick={openModal}>
-  //         Mint
-  //       </Button>
-  //       {isModalOpen && <MintModal
-  //         name={name}
-  //         onClose={closeModal}
-  //         image={imageUrl}
-  //         price={price}
-  //         receiveAddress={address}
-  //         feeRate={1}
-  //         fileName="NFT--collection"
-  //         devFee={0}
-  //         size={0}
-  //       />}
-  //     </Card>
-  //   );
-  // };
-
 
   useEffect(() => {
     async function checkUnisat() {

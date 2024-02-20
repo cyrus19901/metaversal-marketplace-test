@@ -1,15 +1,11 @@
-import { Flex, Modal, Skeleton, Typography } from "antd";
+import { Flex, Modal, Skeleton } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { InscribeOrderData } from "../utils/api-types";
 import { handleError } from "../utils/utils";
 import { api } from "../utils/api";
 import { isOrderProcessing } from "../utils/orderUtils";
 import { SimpleRow } from "./SimpleRow";
-import { OrderPay } from "./OrderPay";
 import { OrderStatus } from "./OrderStatus";
-// import { OrderFiles } from "./OrderFiles";
-
-const { Text, Title } = Typography;
 
 export function OrderDetail({ orderId, close }: { orderId: string, close: () => void }) {
 

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../utils/api';
 import { getStringByteCount, handleError, stringToBase64 } from '../utils/utils';
 import { OrderDetail } from '../components/OrderDetails';
-import { useEventEmitter, useLocalStorageState } from "ahooks";
+import { useEventEmitter } from "ahooks";
 import { setApiKey, setApiNetwork } from "../utils/httpUtils";
 import { NetworkType } from '../types';
 import { CreateOrderFile } from '../utils/api-types';
@@ -38,8 +38,6 @@ const MintModal: React.FC<ModalProps> = ({ name, onClose, image, price, receiveA
     const [fileName_, setfileName_] = useState('');
     const [imageUrl_, setImageUrl_] = useState('');
     const [totalFee, setTotalFee] = useState(0);
-    const [name_, setName_] = useState('');
-    const [price_, setPrice_] = useState('');
     const [fileList, setFileList] = useState<InscribeFileData[]>([])
     const [orderId, setOrderId] = useState('');
     const [baseFee, setBaseFee] = useState(1999);
@@ -48,8 +46,6 @@ const MintModal: React.FC<ModalProps> = ({ name, onClose, image, price, receiveA
 
     useEffect(() => {
         setReceiveAddress_(receiveAddress);
-        setName_(name);
-        setPrice_(price.toString());
         setDevFee_(0);
         setDevAddress_(receiveAddress);
         setfileName_(fileName);
@@ -63,7 +59,7 @@ const MintModal: React.FC<ModalProps> = ({ name, onClose, image, price, receiveA
                 size: getStringByteCount(fileName)
             }
         ])
-    }, [receiveAddress, name, price, feeRate, receiveAddress, fileName, image]);
+    }, [receiveAddress, name, price, feeRate, fileName, image]);
 
 
     const getFeeDetail = () => {
@@ -77,11 +73,11 @@ const MintModal: React.FC<ModalProps> = ({ name, onClose, image, price, receiveA
         const balance = inscriptionBalance * fileCount;
 
         let addrSize = 25 + 1; // p2pkh
-        if (receiveAddress.indexOf('bc1q') == 0 || receiveAddress.indexOf('tb1q') == 0) {
+        if (receiveAddress.indexOf('bc1q') === 0 || receiveAddress.indexOf('tb1q') === 0) {
             addrSize = 22 + 1;
-        } else if (receiveAddress.indexOf('bc1p') == 0 || receiveAddress.indexOf('tb1p') == 0) {
+        } else if (receiveAddress.indexOf('bc1p') === 0 || receiveAddress.indexOf('tb1p') === 0) {
             addrSize = 34 + 1;
-        } else if (receiveAddress.indexOf('2') == 0 || receiveAddress.indexOf('3') == 0) {
+        } else if (receiveAddress.indexOf('2') === 0 || receiveAddress.indexOf('3') === 0) {
             addrSize = 23 + 1;
         }
 

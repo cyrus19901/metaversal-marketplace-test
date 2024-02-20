@@ -234,3 +234,9 @@
     color: #000;
   }
 }
+
+.nft-container {
+  .ant-modal-content {
+    background-color: #000;
+  }
+}
