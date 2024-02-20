@@ -1,4 +1,4 @@
-import { InscribeFileData } from "../pages/mintModal";
+import { InscribeFileData } from "../pages/MintModal";
 // import { SimpleRow } from "./SimpleRow";
 
 type FeeDetailProps = {

@@ -1,36 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { Button, Card, Input, } from "antd";
-import Modal from "./pages/Modal";
+import { Button, Card } from "antd";
+import MintModal from "./pages/MintModal";
 import { NetworkType } from "./types";
+import { Header } from "antd/es/layout/layout";
+import Homepage, { aboutLinks, socialMediaLinks } from "./pages/HomePage";
+import Footer from "./pages/Footer";
 function App() {
 
   const [unisatInstalled, setUnisatInstalled] = useState(false);
   const [connected, setConnected] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
-  const [publicKey, setPublicKey] = useState("");
   const [address, setAddress] = useState("");
-  const [balance, setBalance] = useState({
-    confirmed: 0,
-    unconfirmed: 0,
-    total: 0,
-  });
   const [network, setNetwork] = useState(NetworkType.testnet.toString());
 
-  // const getBasicInfo = async () => {
-  //   const unisat = (window as any).unisat;
-  //   const [address] = await unisat.getAccounts();
-  //   setAddress(address);
-
-  //   const publicKey = await unisat.getPublicKey();
-  //   setPublicKey(publicKey);
-
-  //   const balance = await unisat.getBalance();
-  //   setBalance(balance);
-
-  //   const network = await unisat.getNetwork();
-  //   setNetwork(network);
-  // };
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
@@ -55,8 +38,6 @@ function App() {
       setConnected(true);
 
       setAddress(_accounts[0]);
-
-      // getBasicInfo();
     } else {
       setConnected(false);
     }
@@ -64,7 +45,6 @@ function App() {
 
   const handleNetworkChanged = (network: string) => {
     setNetwork(network);
-    // getBasicInfo();
   };
 
   const connectWallet = async () => {
@@ -72,217 +52,43 @@ function App() {
     handleAccountsChanged(result);
   };
 
-  interface NFTCardProps {
-    imageUrl: string;
-    name: string;
-    price: number;
-  }
+  // interface NFTCardProps {
+  //   imageUrl: string;
+  //   name: string;
+  //   price: number;
+  // }
 
-  const NFTCard: React.FC<NFTCardProps> = ({ imageUrl, name, price }) => {
+  // const NFTCard: React.FC<NFTCardProps> = ({ imageUrl, name, price }) => {
 
-    return (
-      <Card
-        className="nft-box"
-        hoverable
-        cover={<img alt={name} src={imageUrl} style={{ width: "100%" }} />}
-      >
-        <Card.Meta
-          title={name}
-          description={`Price: ${price} BTC`}
-          style={{ color: "white" }}
-        />
-        <Button type="primary" style={{ width: "100%" }} onClick={openModal}>
-          Mint
-        </Button>
-        {isModalOpen && <Modal
-          name={name}
-          onClose={closeModal}
-          image={imageUrl}
-          price={price}
-          receiveAddress={address}
-          feeRate={1}
-          fileName="NFT--collection"
-          devFee={0}
-          size={0}
-        />}
-      </Card>
-    );
-  };
+  //   return (
+  //     <Card
+  //       className="nft-box"
+  //       hoverable
+  //       cover={<img alt={name} src={imageUrl} style={{ width: "100%" }} />}
+  //     >
+  //       <Card.Meta
+  //         title={name}
+  //         description={`Price: ${price} BTC`}
+  //         style={{ color: "white" }}
+  //       />
+  //       <Button type="primary" style={{ width: "100%" }} onClick={openModal}>
+  //         Mint
+  //       </Button>
+  //       {isModalOpen && <MintModal
+  //         name={name}
+  //         onClose={closeModal}
+  //         image={imageUrl}
+  //         price={price}
+  //         receiveAddress={address}
+  //         feeRate={1}
+  //         fileName="NFT--collection"
+  //         devFee={0}
+  //         size={0}
+  //       />}
+  //     </Card>
+  //   );
+  // };
 
-  interface FooterProps {
-    socialMediaLinks: {
-      name: string;
-      url: string;
-    }[];
-    aboutLinks: {
-      name: string;
-      url: string;
-    }[];
-  }
-
-  const socialMediaLinks = [
-    { name: "Twitter", url: "https://twitter.com/example" },
-    { name: "Facebook", url: "https://facebook.com/example" },
-    { name: "Instagram", url: "https://instagram.com/example" },
-  ];
-
-  const aboutLinks = [
-    { name: "About Us", url: "/about" },
-    { name: "Contact Us", url: "/contact" },
-    { name: "Privacy Policy", url: "/privacy" },
-  ];
-
-  const Footer: React.FC<FooterProps> = ({ socialMediaLinks, aboutLinks }) => {
-    return (
-      <div>
-        <p style={{ textAlign: "center" }}>© 2024 Cool NFT Collection</p>
-        <footer className="footer">
-          <div className="footer-section">
-            <h3>Social Media</h3>
-            <ul className="footer-links">
-              {socialMediaLinks.map((link, index) => (
-                <li key={index}>
-                  <a href={link.url} target="_blank" rel="noopener noreferrer">
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="footer-section">
-            <h3>About</h3>
-            <ul className="footer-links">
-              {aboutLinks.map((link, index) => (
-                <li key={index}>
-                  <a href={link.url}>{link.name}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </footer>
-      </div>
-    );
-  };
-
-  interface NFT {
-    id: number;
-    name: string;
-    owner: string;
-    imageUrl: string;
-    price: number;
-  }
-  const nfts: NFT[] = [
-    {
-      id: 1,
-      name: "NFT 1",
-      owner: "Owner 1",
-      imageUrl: require("./images/705.webp"),
-      price: 10,
-    },
-    {
-      id: 2,
-      name: "NFT 2",
-      owner: "Owner 2",
-      imageUrl: require("./images/1656.webp"),
-      price: 20,
-    },
-    {
-      id: 3,
-      name: "NFT 3",
-      owner: "Owner 3",
-      imageUrl: require("./images/2104.webp"),
-      price: 20,
-    },
-    {
-      id: 4,
-      name: "NFT 4",
-      owner: "Owner 4",
-      imageUrl: require("./images/2318.webp"),
-      price: 20,
-    },
-    {
-      id: 5,
-      name: "NFT 5",
-      owner: "Owner 5",
-      imageUrl: require("./images/5439.webp"),
-      price: 20,
-    },
-    {
-      id: 6,
-      name: "NFT 6",
-      owner: "Owner 6",
-      imageUrl: require("./images/6290.webp"),
-      price: 20,
-    },
-    {
-      id: 7,
-      name: "NFT 7",
-      owner: "Owner 7",
-      imageUrl: require("./images/6819.webp"),
-      price: 20,
-    },
-    {
-      id: 8,
-      name: "NFT 8",
-      owner: "Owner 8",
-      imageUrl: require("./images/7456.webp"),
-      price: 20,
-    },
-    {
-      id: 9,
-      name: "NFT 9",
-      owner: "Owner 9",
-      imageUrl: require("./images/9859.webp"),
-      price: 20,
-    },
-    {
-      id: 10,
-      name: "NFT 10",
-      owner: "Owner 10",
-      imageUrl: require("./images/7488.webp"),
-      price: 20,
-    },
-    {
-      id: 11,
-      name: "NFT 11",
-      owner: "Owner 11",
-      imageUrl: require("./images/7959.webp"),
-      price: 20,
-    },
-    {
-      id: 12,
-      name: "NFT 12",
-      owner: "Owner 12",
-      imageUrl: require("./images/8569.avif"),
-      price: 20,
-    },
-  ];
-
-  const Homepage: React.FC = () => {
-
-    return (
-      <div className="App" style={{ color: "bisque" }}>
-        <header className="header">
-          <h1>Cool NFT Collection</h1>
-        </header>
-        <main className="main-content">
-          <div className="nft-container">
-            {nfts.map((nft, index) => (
-              <NFTCard
-                key={index}
-                imageUrl={nft.imageUrl}
-                name={nft.name}
-                price={nft.price}
-              />
-            ))}
-          </div>
-        </main>
-        <div>
-          <Footer socialMediaLinks={socialMediaLinks} aboutLinks={aboutLinks} />
-        </div>
-      </div>
-    );
-  };
 
   useEffect(() => {
     async function checkUnisat() {
@@ -346,224 +152,83 @@ function App() {
         {connected ? (
           <div>
             <div className="App">
-              <Button
-                type="primary"
-                onClick={connectWallet}
-                className="connect-button"
-              >
-                Connect Wallet
-              </Button>
-              <Homepage />
+              <Homepage receiverAddress={address} />
             </div>
           </div>
         ) : (
-          <div>
-            <div className="App">
-              <Button
-                type="primary"
-                onClick={connectWallet}
-                className="connect-button"
-              >
-                Connect Wallet
-              </Button>
-              <Homepage />
+          <div className="App">
+            <Button
+              type="primary"
+              onClick={connectWallet}
+              className="connect-button"
+            >
+              Connect Wallet
+            </Button>
+            <Header style={{ marginTop: '50px', backgroundColor: "beige" }}>
+              <h1>Metalversal Marketplace</h1>
+            </Header>
+            <main>
+              <section className="about-section">
+                <h2>What are Bitcoin NFTs?</h2>
+                <p>Bitcoin NFTs, also known as Bitcoin ordinals or digital artifacts, provide a means to engrave digital content onto the Bitcoin blockchain.
+
+                  Casey Rodarmor introduced the Bitcoin ordinals protocol in January 2023. This protocol enables the inscription of digital content such as art onto the Bitcoin blockchain. In contrast to non-fungible tokens (NFTs) found on Ethereum and other blockchains, Rodarmor aimed to establish an immutable on-chain representation of art, text, or video. The genesis ordinal, a pixel art depicting a skull, was inscribed by Rodarmor on December 14, 2022.
+
+                  With the surge of the NFT space built on Ethereum’s ERC-721 standard in 2021, Rodarmor, a programmer and artist, recognized the opportunity to create a similar yet distinctive experience on the Bitcoin blockchain. His solution, Bitcoin ordinals, draws inspiration from ordinal theory, which he diligently implemented throughout 2022.
+
+                  Ordinal theory focuses on individualizing satoshis, providing them with unique identities that facilitate tracking, transfer, and imbuing them with significance. The excitement surrounding ordinals gained momentum in February 2023, approximately six weeks after the creation of the genesis ordinal.
+
+                  For a brief period, the number of inscriptions doubled every week. However, this figure could have been significantly higher had there been better planning and execution in terms of infrastructure for inscribing and trading ordinals. The rise of Bitcoin ordinals has propelled the Bitcoin network to new heights in terms of usage, fees, and storage space. This breakthrough may also mark a significant milestone for the Bitcoin application tier, shifting the narrative from being solely a “store of value” to encompassing more utilitarian aspects.</p>
+              </section>
+              <section className="services-section">
+                <h2>How do Bitcoin Ordinals work?</h2>
+                <p>The Ordinals protocol serves as a system to assign serial numbers to satoshis, granting each satoshi a unique identifier that can be tracked across transactions. Essentially, ordinals enable users to differentiate individual satoshis by attaching additional data to them, a process referred to as “inscription.”
+
+                  Satoshi, named after the pseudonymous creator of Bitcoin, Satoshi Nakamoto, represents the smallest denomination of Bitcoin (BTC). One BTC can be divided into 100,000,000 satoshis, with each satoshi valued at 0.00000001 BTC.
+
+                  The numbering of satoshis is based on their order of mining and transfer. The ordinal scheme relies on the mining order of satoshis, while the transfer scheme relies on the order of transaction inputs and outputs. Thus, the term “ordinals” arises. The first satoshi in the first block is assigned the ordinal number 0, the second satoshi is assigned 1, and so forth. According to ordinal theory, these ordinal numbers serve as stable identifiers for the data associated with the satoshis.
+
+                  While there are similarities between traditional NFTs and ordinals, there are several key distinctions. NFTs are typically created using smart contracts on blockchains like Ethereum, Solana, and the BNB Chain, often with the assets they represent hosted elsewhere.
+
+                  In contrast, ordinals are directly inscribed onto individual satoshis, which are then included in blocks on the Bitcoin blockchain. Ordinals exist entirely on the blockchain and do not require a sidechain or separate token. This characteristic allows ordinal inscriptions to inherit the simplicity, immutability, security, and durability inherent in Bitcoin itself.</p>
+              </section>
+              <section className="services-section">
+                <h2>What is Ordinal Theory?</h2>
+                <p>Ordinal Theory, within the Bitcoin context, proposes a methodology for identifying and tracking each satoshi using a serial number throughout its lifespan of transactions within the Bitcoin coin supply. This allows for the creation of ordinal inscriptions, which are digital assets similar to NFTs but inscribed directly on a satoshi within the Bitcoin network. The implementation of Ordinal Theory became possible with the Taproot upgrade, which was launched on November 14, 2021, eliminating the need for a separate sidechain or token.
+
+                  With the ability to track and transfer individual satoshis, collecting them has become a possibility. The rarity of different satoshis is determined based on the total supply of bitcoins, and the following ranks have been assigned:
+
+                  Common: Any satoshi other than the first satoshi of its block (2.1 quadrillion total supply).
+                  Uncommon: The first satoshi of each block (6,929,999 total supply).
+                  Rare: The first satoshi of each difficulty adjustment period (3437 total supply).
+                  Epic: The first satoshi after each halving (32 total supply).
+                  Legendary: The first satoshi of each cycle* (5 total supply).
+                  Mythic: The first satoshi of the genesis block (1 total supply).
+                  *A cycle represents the period between conjunctions, which occur when a halving and a difficulty adjustment coincide. While a cycle theoretically occurs every 6 halvings, the first conjunction is yet to occur and is expected to take place in 2032.
+
+                </p>
+              </section>
+              <section className="services-section">
+                <h2>How to mine Bitcoin Ordinals?</h2>
+                <p>The process of creating Bitcoin ordinals has been referred to as mining, minting, or inscribing. However, unlike minting NFTs on the Ethereum blockchain, which has become a relatively mature process, mining Bitcoin ordinals is technically complex and lacks intuitive tools.
+
+                  During the early days of Bitcoin ordinals, only those running a Bitcoin node could mine them. Tech-savvy users would utilize a Bitcoin node with the ord app, a command line wallet, as the entry point for mining ordinals. Node operators would load their wallets with some satoshis to cover gas fees and then perform the inscription process on their ordinals.
+
+                  Nevertheless, there are now no-code ordinal mining applications such as Gamma or the Ordinals Bot that aim to enable users to upload the content they wish to inscribe and create their own Bitcoin ordinals. The user journey typically involves a payment process using a QR code, making it more intuitive for those who are less technically inclined.
+
+                  The tools and infrastructure surrounding Bitcoin ordinals are still in the early stages of development. It has only been a few months since the genesis ordinals were inscribed. As demand from regular users and followers increases, the ecosystem and tooling around Bitcoin ordinals should start to mature, offering more user-friendly experiences.
+                </p>
+              </section>
+            </main>
+            <div>
+              <Footer socialMediaLinks={socialMediaLinks} aboutLinks={aboutLinks} />
             </div>
+
           </div>
         )}
       </header>
     </div>
   );
-}
-
-function SignPsbtCard() {
-  const [psbtHex, setPsbtHex] = useState("");
-  const [psbtResult, setPsbtResult] = useState("");
-  return (
-    <Card size="small" title="Sign Psbt" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>PsbtHex:</div>
-        <Input
-          defaultValue={psbtHex}
-          onChange={(e) => {
-            setPsbtHex(e.target.value);
-          }}
-        ></Input>
-      </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Result:</div>
-        <div style={{ wordWrap: "break-word" }}>{psbtResult}</div>
-      </div>
-      <Button
-        style={{ marginTop: 10 }}
-        onClick={async () => {
-          try {
-            const psbtResult = await (window as any).unisat.signPsbt(psbtHex);
-            setPsbtResult(psbtResult);
-          } catch (e) {
-            setPsbtResult((e as any).message);
-          }
-        }}
-      >
-        Sign Psbt
-      </Button>
-    </Card>
-  );
-}
-
-function SignMessageCard() {
-  const [message, setMessage] = useState("hello world~");
-  const [signature, setSignature] = useState("");
-  return (
-    <Card size="small" title="Sign Message" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Message:</div>
-        <Input
-          defaultValue={message}
-          onChange={(e) => {
-            setMessage(e.target.value);
-          }}
-        ></Input>
-      </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Signature:</div>
-        <div style={{ wordWrap: "break-word" }}>{signature}</div>
-      </div>
-      <Button
-        style={{ marginTop: 10 }}
-        onClick={async () => {
-          const signature = await (window as any).unisat.signMessage(message);
-          setSignature(signature);
-        }}
-      >
-        Sign Message
-      </Button>
-    </Card>
-  );
-}
-
-function PushTxCard() {
-  const [rawtx, setRawtx] = useState("");
-  const [txid, setTxid] = useState("");
-  return (
-    <Card
-      size="small"
-      title="Push Transaction Hex"
-      style={{ width: 300, margin: 10 }}
-    >
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>rawtx:</div>
-        <Input
-          defaultValue={rawtx}
-          onChange={(e: any) => {
-            setRawtx(e.target.value);
-          }}
-        ></Input>
-      </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>txid:</div>
-        <div style={{ wordWrap: "break-word" }}>{txid}</div>
-      </div>
-      <Button
-        style={{ marginTop: 10 }}
-        onClick={async () => {
-          try {
-            const txid = await (window as any).unisat.pushTx(rawtx);
-            setTxid(txid);
-          } catch (e) {
-            setTxid((e as any).message);
-          }
-        }}
-      >
-        PushTx
-      </Button>
-    </Card>
-  );
-}
-
-function PushPsbtCard() {
-  const [psbtHex, setPsbtHex] = useState("");
-  const [txid, setTxid] = useState("");
-  return (
-    <Card size="small" title="Push Psbt Hex" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>psbt hex:</div>
-        <Input
-          defaultValue={psbtHex}
-          onChange={(e: any) => {
-            setPsbtHex(e.target.value);
-          }}
-        ></Input>
-      </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>txid:</div>
-        <div style={{ wordWrap: "break-word" }}>{txid}</div>
-      </div>
-      <Button
-        style={{ marginTop: 10 }}
-        onClick={async () => {
-          try {
-            const txid = await (window as any).unisat.pushPsbt(psbtHex);
-            setTxid(txid);
-          } catch (e) {
-            setTxid((e as any).message);
-          }
-        }}
-      >
-        pushPsbt
-      </Button>
-    </Card>
-  );
-}
-
-function SendBitcoin() {
-  const [toAddress, setToAddress] = useState(
-    "tb1qmfla5j7cpdvmswtruldgvjvk87yrflrfsf6hh0",
-  );
-  const [satoshis, setSatoshis] = useState(1000);
-  const [txid, setTxid] = useState("");
-  return (
-    <Card size="small" title="Send Bitcoin" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Receiver Address:</div>
-        <Input
-          defaultValue={toAddress}
-          onChange={(e) => {
-            setToAddress(e.target.value);
-          }}
-        ></Input>
-      </div>
-
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Amount: (satoshis)</div>
-        <Input
-          defaultValue={satoshis}
-          onChange={(e: any) => {
-            setSatoshis(parseInt(e.target.value));
-          }}
-        ></Input>
-      </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>txid:</div>
-        <div style={{ wordWrap: "break-word" }}>{txid}</div>
-      </div>
-      <Button
-        style={{ marginTop: 10 }}
-        onClick={async () => {
-          try {
-            const txid = await (window as any).unisat.sendBitcoin(
-              toAddress,
-              satoshis,
-            );
-            setTxid(txid);
-          } catch (e) {
-            setTxid((e as any).message);
-          }
-        }}
-      >
-        SendBitcoin
-      </Button>
-    </Card>
-  );
-}
+};
 
 export default App;
